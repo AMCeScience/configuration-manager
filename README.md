@@ -39,4 +39,8 @@ manager.read.getItem(new String[]{"item_1", "this_item"});
 // Write
 manager.writer.write("test", "item_1", "this_item");
 manager.writer.write("test", new String[]{"item_1", "this_item"});
+
+// Error
+manager.read.getItem();
+manager.writer.write();
 ```

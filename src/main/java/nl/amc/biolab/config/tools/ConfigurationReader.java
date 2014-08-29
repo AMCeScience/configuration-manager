@@ -74,6 +74,14 @@ public class ConfigurationReader extends Logger {
     	}
     }
     
+    public Boolean getBooleanItem(String... names) throws ReaderException {
+    	if (getItem(names).toString() == "true" || getItem(names).toString() == "false") {
+    		return Boolean.parseBoolean(getItem(names).toString());
+    	} else {
+    		throw new ReaderException("No key exists with this type.");
+    	}
+    }
+    
     public String getStringItem(String... names) throws ReaderException {
     	return getItem(names).toString();
     }

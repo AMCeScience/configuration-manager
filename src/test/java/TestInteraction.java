@@ -62,6 +62,9 @@ public class TestInteraction {
 				JSONObject test_object = config.read.getJSONObjectItem("test", "object");
 				assertEquals("test", test_object.get("test"));
 				
+				Boolean test_boolean = config.read.getBooleanItem("test_bool");
+				assertEquals(true, test_boolean);
+				
 				// Top level test
 				String test_string_top = config.read.getStringItem("test_2");
 				assertEquals("test", test_string_top);

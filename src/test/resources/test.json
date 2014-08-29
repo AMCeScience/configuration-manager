@@ -1,1 +1,1 @@
-{"test_2":"test","test_3":[1,2,3],"test":{"integer":321,"string":"test","object":{"test":"test"},"long":321,"double":1.23,"float":3.21,"array":[123,321]}}
+{"test_2":"test","test_3":[1,2,3],"test":{"integer":321,"string":"test","object":{"test":"test"},"long":321,"double":1.23,"float":3.21,"array":[123,321]},"test_bool":true}
