@@ -11,7 +11,8 @@ public class TestInteraction {
 	@Test
 	public void testWrite() {
 		try {
-			ConfigurationManager config = new ConfigurationManager("src/test/resources/test.json");
+			ConfigurationManager config = new ConfigurationManager();
+			config.setConfigurationPath("src/test/resources/test.json");
 			
 			try {
 				config.writer.write("diff", new String[]{"test", "object", "test"});
@@ -34,7 +35,8 @@ public class TestInteraction {
 	@Test
 	public void testRead() {
 		try {
-			ConfigurationManager config = new ConfigurationManager("src/test/resources/test.json");
+			ConfigurationManager config = new ConfigurationManager();
+			config.setConfigurationPath("src/test/resources/test.json");
 			
 			try {
 				Object[] test_array = config.read.getArrayItem("test", "array");
@@ -78,7 +80,8 @@ public class TestInteraction {
 	
 	@Test(expected=ReaderException.class)
 	public void testReadArgumentsFail() throws ReaderException {
-		ConfigurationManager config = new ConfigurationManager("src/test/resources/test.json");
+		ConfigurationManager config = new ConfigurationManager();
+		config.setConfigurationPath("src/test/resources/test.json");
 		
 		// No key is given, the method should throw an error
 		config.read.getItem();
@@ -86,7 +89,8 @@ public class TestInteraction {
 	
 	@Test(expected=ReaderException.class)
 	public void testTooManyArgumentsFail() throws ReaderException {
-		ConfigurationManager config = new ConfigurationManager("src/test/resources/test.json");
+		ConfigurationManager config = new ConfigurationManager();
+		config.setConfigurationPath("src/test/resources/test.json");
 		
 		// No key is given, the method should throw an error
 		config.read.getItem("test_2", "doesntexist");
@@ -94,7 +98,8 @@ public class TestInteraction {
 	
 	@Test(expected=ReaderException.class)
 	public void testReadCastFail() throws ReaderException {
-		ConfigurationManager config = new ConfigurationManager("src/test/resources/test.json");
+		ConfigurationManager config = new ConfigurationManager();
+		config.setConfigurationPath("src/test/resources/test.json");
 		
 		// Cast exceptions expected
 		config.read.getIntegerItem("test", "double");

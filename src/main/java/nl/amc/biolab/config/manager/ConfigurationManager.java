@@ -7,9 +7,34 @@ import nl.amc.biolab.config.tools.ConfigurationWriter;
 public class ConfigurationManager {
 	public ConfigurationReader read;
 	public ConfigurationWriter writer;
+	private String config_file_path;
+	private String config_file_path_default = "guse/apache-tomcat-6.0.36/webapps/config.json";
 	
-	public ConfigurationManager(String config_file_location) throws ReaderException {
-		this.read = new ConfigurationReader(config_file_location);
+	public ConfigurationManager() throws ReaderException {
+		_init();
+	}
+	
+	public ConfigurationManager(String config_file_path) throws ReaderException {
+		setConfigurationPath(config_file_path);
+		
+		_init();
+	}
+	
+	private void _init() throws ReaderException {
+		if (getConfigurationPath() == null) {
+			// Set to default
+			setConfigurationPath(config_file_path_default);
+		}
+		
+		this.read = new ConfigurationReader(getConfigurationPath());
 		this.writer = new ConfigurationWriter(this.read);
+	}
+	
+	public String getConfigurationPath() {
+		return config_file_path;
+	}
+	
+	public void setConfigurationPath(String config_file_path) {
+		this.config_file_path = config_file_path;
 	}
 }
