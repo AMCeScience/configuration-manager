@@ -15,26 +15,18 @@ public class ConfigurationManager {
 	}
 	
 	public ConfigurationManager(String config_file_path) throws ReaderException {
-		setConfigurationPath(config_file_path);
+		this.config_file_path = config_file_path;
 		
 		_init();
 	}
 	
 	private void _init() throws ReaderException {
-		if (getConfigurationPath() == null) {
+		if (this.config_file_path == null) {
 			// Set to default
-			setConfigurationPath(config_file_path_default);
+			this.config_file_path = config_file_path_default;
 		}
 		
-		this.read = new ConfigurationReader(getConfigurationPath());
+		this.read = new ConfigurationReader(this.config_file_path);
 		this.writer = new ConfigurationWriter(this.read);
-	}
-	
-	public String getConfigurationPath() {
-		return config_file_path;
-	}
-	
-	public void setConfigurationPath(String config_file_path) {
-		this.config_file_path = config_file_path;
 	}
 }
