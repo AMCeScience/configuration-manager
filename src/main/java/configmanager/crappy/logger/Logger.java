@@ -2,15 +2,16 @@ package configmanager.crappy.logger;
 
 import java.util.Date;
 
+import nl.amc.biolab.config.manager.ConfigurationManager;
+
 /**
  * Simple logger function
  * 
  * @author Allard van Altena
  */
 public class Logger {
-	private String PORTLET = "Admin Portlet";
     public Logger log;
-    private int level = 0;
+    public int level = 0;
     
     /**
      * Exposes the log variable to all the classes
@@ -27,7 +28,7 @@ public class Logger {
         Date date = new Date();
         
         if (level <= this.level) {
-        	System.out.println(PORTLET + ", " + date.toString() + " MSG: " + message);
+        	System.out.println(ConfigurationManager.portlet + ", " + date.toString() + " MSG: " + message);
         }
     }
 }

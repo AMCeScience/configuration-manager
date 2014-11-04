@@ -12,25 +12,22 @@ import java.util.List;
 
 import nl.amc.biolab.config.exceptions.ReaderException;
 import nl.amc.biolab.config.exceptions.WriterException;
+import nl.amc.biolab.config.manager.ConfigurationManager;
 
 import org.json.simple.JSONObject;
 
-import configmanager.crappy.logger.Logger;
-
-public class ConfigurationWriter extends Logger {
-	private ConfigurationReader reader;
+public class ConfigurationWriter {
 	private FileLock lock;
 	private RandomAccessFile file;
 	private FileChannel channel;
+	
 	public String lockException = "File is locked.";
 
-	public ConfigurationWriter(ConfigurationReader reader) throws ReaderException {
-		this.reader = reader;
-	}
+	public ConfigurationWriter() {}
 
 	private void _getLock() throws WriterException {
 		try {
-			this.file = new RandomAccessFile(reader.getConfigFile(), "rw");
+			this.file = new RandomAccessFile(ConfigurationManager.read.getConfigFile(), "rw");
 			this.channel = this.file.getChannel();
 
 			try {
@@ -39,7 +36,7 @@ public class ConfigurationWriter extends Logger {
 				throw new WriterException(lockException);
 			}
 		} catch (FileNotFoundException e) {
-			throw new WriterException("Configuration file was not found at provided location.");
+			throw new WriterException("Configuration file was not found at provided location");
 		} catch (IOException e) {
 			throw new WriterException(e.getMessage());
 		}
@@ -74,15 +71,15 @@ public class ConfigurationWriter extends Logger {
 			keys = list.toArray(new String[list.size()]);
 
 			// Get the object requested and write data
-			current_obj = reader.getJSONObjectItem(keys);
+			current_obj = ConfigurationManager.read.getJSONObjectItem(keys);
 			current_obj.put(key_to_write, obj_to_write);
 
 			if (current_obj != null) {
-				log("writing: " + reader.getFullFile().toJSONString(), 5);
+				ConfigurationManager.logger.log("Writing: " + ConfigurationManager.read.getFullFile().toJSONString(), 5);
 
 				try {
 					this.file.setLength(0L);
-					this.file.write(reader.getFullFile().toJSONString().getBytes());
+					this.file.write(ConfigurationManager.read.getFullFile().toJSONString().getBytes());
 				} catch (IOException e) {
 					throw new WriterException(e.getMessage());
 				}

@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import nl.amc.biolab.config.exceptions.ReaderException;
+import nl.amc.biolab.config.manager.ConfigurationManager;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,23 +14,18 @@ import org.json.simple.parser.ParseException;
 
 import com.google.common.primitives.Ints;
 
-import configmanager.crappy.logger.Logger;
-
 /**
  * Configuration file reader class, handles reading the configuration file and
  * extracting specific configuration items from it
  *
  * @author Allard van Altena
  */
-public class ConfigurationReader extends Logger {
-	protected String config_file_location;
+public class ConfigurationReader {
 	protected File config_file;
 	private Object json_obj;
 	private Long read_time;
 
-	public ConfigurationReader(String config_file_location) throws ReaderException {
-		this.config_file_location = config_file_location;
-
+	public ConfigurationReader() throws ReaderException {
 		_parseFile();
 	}
 
@@ -40,14 +36,14 @@ public class ConfigurationReader extends Logger {
 			return ((JSONArray) result).toArray();
 		}
 
-		throw new ReaderException("No key exists with this type.");
+		throw new ReaderException("No key exists with this type, keys: " + _parseMessage(names) + ". In file: " +  ConfigurationManager.config_file_path);
 	}
 
 	public int getIntegerItem(String... names) throws ReaderException {
 		try {
 			return Ints.checkedCast(getLongItem(names));
 		} catch (IllegalArgumentException e) {
-			throw new ReaderException("No key exists with this type.");
+			throw new ReaderException("No key exists with this type, keys: " + _parseMessage(names) + ". In file: " +  ConfigurationManager.config_file_path);
 		}
 	}
 
@@ -55,7 +51,7 @@ public class ConfigurationReader extends Logger {
 		try {
 			return Long.parseLong(getItem(names).toString());
 		} catch (NumberFormatException e) {
-			throw new ReaderException("No key exists with this type.");
+			throw new ReaderException("No key exists with this type, keys: " + _parseMessage(names) + ". In file: " +  ConfigurationManager.config_file_path);
 		}
 	}
 
@@ -63,7 +59,7 @@ public class ConfigurationReader extends Logger {
 		try {
 			return Double.parseDouble(getItem(names).toString());
 		} catch (NumberFormatException e) {
-			throw new ReaderException("No key exists with this type.");
+			throw new ReaderException("No key exists with this type, keys: " + _parseMessage(names) + ". In file: " +  ConfigurationManager.config_file_path);
 		}
 	}
 
@@ -71,7 +67,7 @@ public class ConfigurationReader extends Logger {
 		try {
 			return Float.parseFloat(getItem(names).toString());
 		} catch (NumberFormatException e) {
-			throw new ReaderException("No key exists with this type.");
+			throw new ReaderException("No key exists with this type, keys: " + _parseMessage(names) + ". In file: " +  ConfigurationManager.config_file_path);
 		}
 	}
 
@@ -79,7 +75,7 @@ public class ConfigurationReader extends Logger {
 		if (getItem(names).toString() == "true" || getItem(names).toString() == "false") {
 			return Boolean.parseBoolean(getItem(names).toString());
 		} else {
-			throw new ReaderException("No key exists with this type.");
+			throw new ReaderException("No key exists with this type, keys: " + _parseMessage(names) + ". In file: " +  ConfigurationManager.config_file_path);
 		}
 	}
 
@@ -94,7 +90,7 @@ public class ConfigurationReader extends Logger {
 			return (JSONObject) result;
 		}
 
-		throw new ReaderException("No key exists with this type.");
+		throw new ReaderException("No key exists with this type, keys: " + _parseMessage(names) + ". In file: " +  ConfigurationManager.config_file_path);
 	}
 
 	public Object getItem(String... names) throws ReaderException {
@@ -103,7 +99,7 @@ public class ConfigurationReader extends Logger {
 		}
 
 		if (_hasBeenModified() || this.json_obj == null) {
-			log("modified", 5);
+			ConfigurationManager.logger.log("modified", 5);
 
 			_parseFile();
 		}
@@ -121,13 +117,7 @@ public class ConfigurationReader extends Logger {
 		for (int count = 0; count <= names.length; count++) {
 			if (!(current_obj instanceof JSONObject)) {
 				// We've gone to far i.e. key does not exist on this level
-				String error_name = "";
-
-				for (String temp_name : names) {
-					error_name += temp_name + " ";
-				}
-
-				throw new ReaderException("Key does not exist in configuration file: " + error_name);
+				throw new ReaderException("Key does not exist in configuration file: " + _parseMessage(names) + ". File path: " + ConfigurationManager.config_file_path);
 			}
 
 			inner_obj = (JSONObject) current_obj;
@@ -138,18 +128,12 @@ public class ConfigurationReader extends Logger {
 				current_obj = _getItem(inner_obj, name);
 
 				if (count + 1 == names.length) {
-					log("returning: " + current_obj.toString(), 5);
+					ConfigurationManager.logger.log("returning: " + current_obj.toString(), 5);
 
 					return current_obj;
 				}
 			} else {
-				String error_name = "";
-
-				for (String temp_name : names) {
-					error_name += temp_name + " ";
-				}
-
-				throw new ReaderException("Key does not exist in configuration file: " + error_name);
+				throw new ReaderException("Key does not exist in configuration file: " + _parseMessage(names) + ". File path: " + ConfigurationManager.config_file_path);
 			}
 		}
 
@@ -165,7 +149,7 @@ public class ConfigurationReader extends Logger {
 	}
 
 	private void _parseFile() throws ReaderException {
-		log("parsing", 5);
+		ConfigurationManager.logger.log("parsing", 5);
 
 		JSONParser parser = new JSONParser();
 
@@ -175,9 +159,9 @@ public class ConfigurationReader extends Logger {
 			this.read_time = getConfigFile().lastModified();
 			this.json_obj = parser.parse(new FileReader(getConfigFile()));
 		} catch (IOException e) {
-			log(e.toString(), 1);
+			ConfigurationManager.logger.log(e.toString(), 1);
 		} catch (ParseException e) {
-			log(e.toString(), 1);
+			ConfigurationManager.logger.log(e.toString(), 1);
 		}
 	}
 
@@ -189,21 +173,21 @@ public class ConfigurationReader extends Logger {
 
 			return (JSONObject) parser.parse(new FileReader(getConfigFile()));
 		} catch (IOException e) {
-			log(e.toString(), 1);
+			ConfigurationManager.logger.log(e.toString(), 1);
 		} catch (ParseException e) {
-			log(e.toString(), 1);
+			ConfigurationManager.logger.log(e.toString(), 1);
 		}
 
 		return null;
 	}
 
 	protected void _readFile() throws ReaderException {
-		File config_file = new File(this.config_file_location);
+		File config_file = new File(ConfigurationManager.config_file_path);
 
 		if (config_file.exists()) {
 			_setConfigFile(config_file);
 		} else {
-			throw new ReaderException("Configuration file was not found on the provided location.");
+			throw new ReaderException("Configuration file was not found on the provided location: " + ConfigurationManager.config_file_path);
 		}
 	}
 
@@ -216,7 +200,7 @@ public class ConfigurationReader extends Logger {
 	}
 
 	private boolean _hasBeenModified() {
-		File config_file = new File(this.config_file_location);
+		File config_file = new File(ConfigurationManager.config_file_path);
 
 		Long this_time = config_file.lastModified();
 
@@ -225,5 +209,15 @@ public class ConfigurationReader extends Logger {
 
 	private Object _getItem(JSONObject obj, String name) {
 		return obj.get(name);
+	}
+	
+	private String _parseMessage(String ... array) {
+		String error = "";
+		
+		for (String temp : array) {
+			error += temp + " ";
+		}
+		
+		return error;
 	}
 }
