@@ -11,7 +11,7 @@ import nl.amc.biolab.config.manager.ConfigurationManager;
  */
 public class Logger {
     public Logger log;
-    public int level = 0;
+    public int level = 1;
     
     /**
      * Exposes the log variable to all the classes

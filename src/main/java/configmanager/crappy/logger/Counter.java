@@ -36,4 +36,13 @@ public class Counter extends Logger {
 	public void stop() {
 		log("Execution time " + MSG + ": " + ((System.currentTimeMillis() - startTime) / 1000) + " sec", 5);
 	}
+	
+	/**
+	 * Poll the timer
+	 * 
+	 * @return currently execution time
+	 */
+	public long poll() {
+		return System.currentTimeMillis() - startTime;
+	}
 }
