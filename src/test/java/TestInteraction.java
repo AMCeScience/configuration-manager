@@ -22,7 +22,7 @@ public class TestInteraction {
 	
 	public void testWrite() {
 		try {
-			ConfigurationManager config = new ConfigurationManager("src/test/resources/test.json");
+			ConfigurationManager.init("src/test/resources/test.json");
 			
 			try {
 				ConfigurationManager.writer.write("diff", new String[]{"test", "object", "test"});
@@ -44,7 +44,7 @@ public class TestInteraction {
 	
 	public void testRead() {
 		try {
-			ConfigurationManager config = new ConfigurationManager("src/test/resources/test.json");
+			ConfigurationManager.init("src/test/resources/test.json");
 			
 			try {
 				Object[] test_array = ConfigurationManager.read.getArrayItem("test", "array");
@@ -88,7 +88,7 @@ public class TestInteraction {
 	
 	//@Test(expected=ReaderException.class)
 	public void testReadArgumentsFail() throws ReaderException {
-		ConfigurationManager config = new ConfigurationManager("src/test/resources/test.json");
+		ConfigurationManager.init("src/test/resources/test.json");
 		
 		// No key is given, the method should throw an error
 		ConfigurationManager.read.getItem();
@@ -96,7 +96,7 @@ public class TestInteraction {
 	
 	//@Test(expected=ReaderException.class)
 	public void testTooManyArgumentsFail() throws ReaderException {
-		ConfigurationManager config = new ConfigurationManager("src/test/resources/test.json");
+		ConfigurationManager.init("src/test/resources/test.json");
 		
 		// No key is given, the method should throw an error
 		ConfigurationManager.read.getItem("test_2", "doesntexist");
@@ -104,7 +104,7 @@ public class TestInteraction {
 	
 	//@Test(expected=ReaderException.class)
 	public void testReadCastFail() throws ReaderException {
-		ConfigurationManager config = new ConfigurationManager("src/test/resources/test.json");
+		ConfigurationManager.init("src/test/resources/test.json");
 		
 		// Cast exceptions expected
 		ConfigurationManager.read.getIntegerItem("test", "double");
